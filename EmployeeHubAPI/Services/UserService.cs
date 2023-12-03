@@ -37,7 +37,7 @@ namespace EmployeeHubAPI.Services
             return dtos;
         }
 
-        public async Task<ApplicationUserDto> GetUserDto(string id)
+        public async Task<ApplicationUserDto> GetUserDto(string? id)
         {
             var user = await GetUserById(id);
             var dto = _mapper.Map<ApplicationUserDto>(user);
@@ -111,6 +111,9 @@ namespace EmployeeHubAPI.Services
 
         private async Task<ApplicationUser> GetUserById(string id)
         {
+            if (string.IsNullOrEmpty(id))
+                id = GetCurrentUserId();
+
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
 
             if (user is null) throw new NotFoundException("User not found");
@@ -122,6 +125,15 @@ namespace EmployeeHubAPI.Services
 
         private async Task<List<ApplicationUser>> GetAllUsers() => await _context.Users.ToListAsync();
 
-        
+        private string GetCurrentUserId()
+        {
+            var currentUserId = _contextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (currentUserId is null || currentUserId == string.Empty)
+                throw new NotFoundException("There is no claim for current User Id");
+
+            return currentUserId;
+
+        }
     }
 }

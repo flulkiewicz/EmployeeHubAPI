@@ -7,7 +7,7 @@ namespace EmployeeHubAPI.Services.Interfaces
     {
         Task<List<ApplicationUserDto>> DeleteUser(string id);
         Task<List<ApplicationUserDto>> GetAllUserDtos();
-        Task<ApplicationUserDto> GetUserDto(string id);
+        Task<ApplicationUserDto> GetUserDto(string? id = null);
         Task<ApplicationUserDto> UpdateUser(string id, ApplicationUserUpdateDto userDto);
         Task<ApplicationUserDto> SelfUpdateUser(ApplicationUserUpdateDto userDto);
         Task<ApplicationUserDto> UserActivation(string id, ApplicationUserActivationDto userDto);
