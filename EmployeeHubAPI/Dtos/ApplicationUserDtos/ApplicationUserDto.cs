@@ -1,4 +1,5 @@
 ﻿using EmployeeHubAPI.Dtos.EmployeeDtos;
+using Microsoft.AspNetCore.Identity;
 
 namespace EmployeeHubAPI.ApplicationUserDtos
 {
@@ -12,5 +13,6 @@ namespace EmployeeHubAPI.ApplicationUserDtos
         public Guid? EmployeeAccountId { get; set; }
         public EmployeeUserDto? EmployeeAccount { get; set; }
         public bool Active { get; set; }
+        public List<string> Roles {  get; set; } = new List<string>();
     }
 }

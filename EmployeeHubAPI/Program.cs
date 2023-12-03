@@ -13,6 +13,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddCors();
+
 builder.Services.AddHttpContextAccessor();
 
 // Identity
@@ -103,6 +105,11 @@ if (app.Environment.IsDevelopment())
 
     if (seeder != null)
         await seeder.Seed();
+
+    app.UseCors(x => x
+        .AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader());
 }
 
 
