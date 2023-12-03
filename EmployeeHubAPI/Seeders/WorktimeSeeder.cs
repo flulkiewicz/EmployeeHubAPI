@@ -30,15 +30,30 @@ namespace EmployeeHubAPI.Seeders
         {
             var sessions = new List<WorktimeSession>();
 
-            for (int i = 0; i < numberOfSessions; i++)
+            while (sessions.Count < numberOfSessions)
             {
                 var start = GenerateRandomDateTime();
-                var end = start.AddHours(_random.Next(8, 11)); 
+                var end = start.AddHours(_random.Next(8, 11));
 
-                sessions.Add(new WorktimeSession { Start = start, End = end });
+                if (!IsOverlapping(sessions, start, end))
+                {
+                    sessions.Add(new WorktimeSession { Start = start, End = end });
+                }
             }
 
             return sessions;
+        }
+
+        private bool IsOverlapping(List<WorktimeSession> sessions, DateTime start, DateTime end)
+        {
+            foreach (var session in sessions)
+            {
+                if (start < session.End && end > session.Start)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private DateTime GenerateRandomDateTime()

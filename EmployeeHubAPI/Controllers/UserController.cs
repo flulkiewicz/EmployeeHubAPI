@@ -1,8 +1,6 @@
 ﻿using EmployeeHubAPI.ApplicationUserDtos;
 using EmployeeHubAPI.Data;
 using EmployeeHubAPI.Dtos.ApplicationUserDtos;
-using EmployeeHubAPI.Entities;
-using EmployeeHubAPI.Services;
 using EmployeeHubAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

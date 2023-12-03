@@ -112,10 +112,10 @@ namespace EmployeeHubAPI.Services
                 responseMessage = "No sessions for employee";
             else
             {
-                responseMessage = "Summary time for monthly sessions";
                 responseResult = CalculateTotalWorktime(sessions);
+                responseMessage = $"Summary time for monthly sessions: {responseResult.Hours}h {responseResult.Minutes}min";
             }
-            
+
 
 
             return new { Info = responseMessage, Result = responseResult };
@@ -123,7 +123,10 @@ namespace EmployeeHubAPI.Services
 
         private async Task<ApplicationUser> GetUserById(string? userId = null)
         {
-            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId) ?? throw new Exception("User for handling session not found");
+            var user = await _userManager.Users
+                .Include(e => e.EmployeeAccount)
+                .ThenInclude(e => e.WorktimeSessions)
+                .FirstOrDefaultAsync(x => x.Id == userId) ?? throw new Exception("User for handling session not found");
             if (user is null)
                 throw new NotFoundException("User not found");
             if (user.EmployeeAccount is null)

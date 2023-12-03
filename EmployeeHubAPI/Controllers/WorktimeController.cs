@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeHubAPI.Controllers
 {
-    [Authorize(Policy = "Users")]
+    //[Authorize(Policy = "Users")]
     [ApiController]
     [Route("worktime-session")]
     public class WorktimeController : ControllerBase
@@ -18,7 +18,7 @@ namespace EmployeeHubAPI.Controllers
             _worktimeService = worktimeService;
         }
 
-        //Self handle session for currently logged user
+        //Self handle session for currently logged employee
         [HttpGet]
         public async Task<ActionResult<WorktimeSessionResponse>> HandleSession()
         {
@@ -27,7 +27,7 @@ namespace EmployeeHubAPI.Controllers
             return Ok(result);
         }
 
-        //Handle session for user - provide user Id
+        //Handle session for user - provide employee Id
         [HttpGet("{id}")]
         public async Task<ActionResult<WorktimeSessionResponse>> HandleSessionManually(string id)
         {
@@ -36,7 +36,7 @@ namespace EmployeeHubAPI.Controllers
             return Ok(result);
         }
 
-        [HttpGet("montly/{userId}")]
+        [HttpGet("montly-time/{userId}")]
         public async Task<ActionResult<List<WorktimeSessionDto>>> GetSummaryTimeForCurrentMonth(string userId)
         {
             var result = await _worktimeService.GetMonthlyTime(userId);
