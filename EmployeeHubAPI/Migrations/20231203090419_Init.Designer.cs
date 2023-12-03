@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EmployeeHubAPI.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20231124113948_Init")]
+    [Migration("20231203090419_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -33,6 +33,9 @@ namespace EmployeeHubAPI.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -44,8 +47,11 @@ namespace EmployeeHubAPI.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<Guid?>("EmployeeAccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -82,10 +88,6 @@ namespace EmployeeHubAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EmployeeAccountId")
-                        .IsUnique()
-                        .HasFilter("[EmployeeAccountId] IS NOT NULL");
-
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -106,25 +108,46 @@ namespace EmployeeHubAPI.Migrations
                     b.Property<int?>("Department")
                         .HasColumnType("int");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<Guid?>("SupervisorId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Surname")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("SupervisorId");
 
-                    b.ToTable("Employee");
+                    b.HasIndex("UserId")
+                        .IsUnique()
+                        .HasFilter("[UserId] IS NOT NULL");
+
+                    b.ToTable("Employees");
+                });
+
+            modelBuilder.Entity("EmployeeHubAPI.Entities.WorktimeSession", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("End")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Start")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("WorktimeSessions");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -152,26 +175,6 @@ namespace EmployeeHubAPI.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("Roles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "7bbf739a-3a48-45e1-9166-47b08aae7167",
-                            Name = "Admin",
-                            NormalizedName = "admin"
-                        },
-                        new
-                        {
-                            Id = "4e2de0b0-84f9-4d53-b13e-3c6125361fba",
-                            Name = "Supervisor",
-                            NormalizedName = "supervisor"
-                        },
-                        new
-                        {
-                            Id = "2e89651f-ac65-4af3-970d-bbd0000ba3cd",
-                            Name = "User",
-                            NormalizedName = "user"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -280,22 +283,26 @@ namespace EmployeeHubAPI.Migrations
                     b.ToTable("Tokens", (string)null);
                 });
 
-            modelBuilder.Entity("EmployeeHubAPI.Entities.ApplicationUser", b =>
-                {
-                    b.HasOne("EmployeeHubAPI.Entities.Employee", "EmployeeAccount")
-                        .WithOne("User")
-                        .HasForeignKey("EmployeeHubAPI.Entities.ApplicationUser", "EmployeeAccountId");
-
-                    b.Navigation("EmployeeAccount");
-                });
-
             modelBuilder.Entity("EmployeeHubAPI.Entities.Employee", b =>
                 {
                     b.HasOne("EmployeeHubAPI.Entities.Employee", "Supervisor")
                         .WithMany("Employees")
                         .HasForeignKey("SupervisorId");
 
+                    b.HasOne("EmployeeHubAPI.Entities.ApplicationUser", "User")
+                        .WithOne("EmployeeAccount")
+                        .HasForeignKey("EmployeeHubAPI.Entities.Employee", "UserId");
+
                     b.Navigation("Supervisor");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("EmployeeHubAPI.Entities.WorktimeSession", b =>
+                {
+                    b.HasOne("EmployeeHubAPI.Entities.Employee", null)
+                        .WithMany("WorktimeSessions")
+                        .HasForeignKey("EmployeeId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -349,11 +356,16 @@ namespace EmployeeHubAPI.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("EmployeeHubAPI.Entities.ApplicationUser", b =>
+                {
+                    b.Navigation("EmployeeAccount");
+                });
+
             modelBuilder.Entity("EmployeeHubAPI.Entities.Employee", b =>
                 {
                     b.Navigation("Employees");
 
-                    b.Navigation("User");
+                    b.Navigation("WorktimeSessions");
                 });
 #pragma warning restore 612, 618
         }

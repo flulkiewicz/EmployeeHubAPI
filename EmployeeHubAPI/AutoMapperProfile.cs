@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
-using EmployeeHubAPI.Dtos;
+using EmployeeHubAPI.ApplicationUserDtos;
+using EmployeeHubAPI.Dtos.EmployeeDtos;
+using EmployeeHubAPI.Dtos.WorktimeSessionDtos;
 using EmployeeHubAPI.Entities;
 
 namespace EmployeeHubAPI
@@ -8,9 +10,21 @@ namespace EmployeeHubAPI
     {
         public AutoMapperProfile()
         {
-            #region UserMaps
+            #region User
             CreateMap<ApplicationUser, ApplicationUserDto>();
             CreateMap<ApplicationUserUpdateDto, ApplicationUser>();
+            #endregion
+
+            #region Employee
+            CreateMap<EmployeeRegisterDto, Employee>();
+            CreateMap<EmployeeUpdateDto, Employee>();
+            CreateMap<Employee, EmployeeDto>();
+            CreateMap<Employee, EmployeeUserDto>();
+            #endregion
+
+            #region WortimeSession
+            CreateMap<WorktimeSession, WorktimeSessionDto>();
+            CreateMap<WorktimeSessionDto, WorktimeSession>();
             #endregion
         }
     }

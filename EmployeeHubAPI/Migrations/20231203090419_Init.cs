@@ -3,8 +3,6 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace EmployeeHubAPI.Migrations
 {
     /// <inheritdoc />
@@ -13,27 +11,6 @@ namespace EmployeeHubAPI.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Employee",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Surname = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SupervisorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Department = table.Column<int>(type: "int", nullable: true),
-                    UserId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Employee", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Employee_Employee_SupervisorId",
-                        column: x => x.SupervisorId,
-                        principalTable: "Employee",
-                        principalColumn: "Id");
-                });
-
             migrationBuilder.CreateTable(
                 name: "Roles",
                 columns: table => new
@@ -53,7 +30,9 @@ namespace EmployeeHubAPI.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    EmployeeAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Active = table.Column<bool>(type: "bit", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -72,11 +51,6 @@ namespace EmployeeHubAPI.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Users_Employee_EmployeeAccountId",
-                        column: x => x.EmployeeAccountId,
-                        principalTable: "Employee",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -98,6 +72,30 @@ namespace EmployeeHubAPI.Migrations
                         principalTable: "Roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Employees",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SupervisorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Department = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Employees", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Employees_Employees_SupervisorId",
+                        column: x => x.SupervisorId,
+                        principalTable: "Employees",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Employees_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -185,20 +183,37 @@ namespace EmployeeHubAPI.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.InsertData(
-                table: "Roles",
-                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[,]
+            migrationBuilder.CreateTable(
+                name: "WorktimeSessions",
+                columns: table => new
                 {
-                    { "2e89651f-ac65-4af3-970d-bbd0000ba3cd", null, "User", "user" },
-                    { "4e2de0b0-84f9-4d53-b13e-3c6125361fba", null, "Supervisor", "supervisor" },
-                    { "7bbf739a-3a48-45e1-9166-47b08aae7167", null, "Admin", "admin" }
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Start = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    End = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EmployeeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WorktimeSessions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WorktimeSessions_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Employee_SupervisorId",
-                table: "Employee",
+                name: "IX_Employees_SupervisorId",
+                table: "Employees",
                 column: "SupervisorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Employees_UserId",
+                table: "Employees",
+                column: "UserId",
+                unique: true,
+                filter: "[UserId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RoleClaims_RoleId",
@@ -233,18 +248,16 @@ namespace EmployeeHubAPI.Migrations
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Users_EmployeeAccountId",
-                table: "Users",
-                column: "EmployeeAccountId",
-                unique: true,
-                filter: "[EmployeeAccountId] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 table: "Users",
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WorktimeSessions_EmployeeId",
+                table: "WorktimeSessions",
+                column: "EmployeeId");
         }
 
         /// <inheritdoc />
@@ -266,13 +279,16 @@ namespace EmployeeHubAPI.Migrations
                 name: "UserRoles");
 
             migrationBuilder.DropTable(
+                name: "WorktimeSessions");
+
+            migrationBuilder.DropTable(
                 name: "Roles");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "Employees");
 
             migrationBuilder.DropTable(
-                name: "Employee");
+                name: "Users");
         }
     }
 }

@@ -29,18 +29,15 @@ namespace EmployeeHubAPI.Data
                 .ToTable("RoleClaims");
 
             builder.Entity<IdentityRole>()
-                .ToTable("Roles")
-                .HasData(
-                    new IdentityRole { Name = "Admin", NormalizedName = "admin"},
-                    new IdentityRole { Name = "Supervisor", NormalizedName = "supervisor" },
-                    new IdentityRole { Name = "User", NormalizedName = "user"}
-                ); ;
+                .ToTable("Roles");
 
             builder.Entity<IdentityUserRole<string>>()
                 .ToTable("UserRoles");
 
         }
 
+        public DbSet<Employee> Employees { get; set; }
+        public DbSet<WorktimeSession> WorktimeSessions { get; set; }
        
     }
 }

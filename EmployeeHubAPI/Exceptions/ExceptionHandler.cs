@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
+﻿using EmployeeHubAPI.Exceptions.User;
+using Microsoft.AspNetCore.Diagnostics;
 
 namespace EmployeeHubAPI.Exceptions
 {
@@ -13,6 +14,7 @@ namespace EmployeeHubAPI.Exceptions
         {
             (int statusCode, string errorMessage) = exception switch
             {
+                UserIsActiveException userIsActiveException => (400, "User is already active"),
                 BadRequestException badRequestException => (403, badRequestException.Message),
                 NotFoundException notFoundException => (404, notFoundException.Message),
                 _ => (500, "Ooops, we encountered problem. Come back later.")

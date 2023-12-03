@@ -1,78 +1,127 @@
 ﻿using AutoMapper;
+using EmployeeHubAPI.ApplicationUserDtos;
 using EmployeeHubAPI.Data;
-using EmployeeHubAPI.Dtos;
+using EmployeeHubAPI.Dtos.ApplicationUserDtos;
 using EmployeeHubAPI.Entities;
 using EmployeeHubAPI.Exceptions;
+using EmployeeHubAPI.Exceptions.User;
+using EmployeeHubAPI.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace EmployeeHubAPI.Services
 {
-    public class UserService
+    public class UserService : IUserService
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _contextAccessor;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public UserService(DataContext context, IMapper mapper)
+        public UserService(DataContext context, IMapper mapper, IHttpContextAccessor contextAccessor, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _mapper = mapper;
+            _contextAccessor = contextAccessor;
+            _userManager = userManager;
         }
 
-        public List<ApplicationUserDto> GetAllUserDtos()
+        public async Task<List<ApplicationUserDto>> GetAllUserDtos()
         {
-            var dtos = GetAllUsers()
+            var users = await GetAllUsers();
+            var dtos = users
                 .Select(x => _mapper.Map<ApplicationUserDto>(x))
                 .ToList();
 
             return dtos;
         }
 
-        public ApplicationUserDto GetUserDto(string id)
+        public async Task<ApplicationUserDto> GetUserDto(string id)
         {
-            var dto = _mapper.Map<ApplicationUserDto>(GetUserById(id));
+            var user = await GetUserById(id);
+            var dto = _mapper.Map<ApplicationUserDto>(user);
 
             return dto;
         }
 
-        public ApplicationUserDto UpdateUser(string id, ApplicationUserUpdateDto userDto)
+        public async Task<ApplicationUserDto> UpdateUser(string id, ApplicationUserUpdateDto userDto)
         {
-            var user = GetUserById(id);
+            var user = await GetUserById(id);
 
             _mapper.Map(userDto, user);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             var dto = _mapper.Map<ApplicationUserDto>(user);
 
             return dto;
         }
 
-        public List<ApplicationUserDto> DeleteUser(string id)
+        public async Task<List<ApplicationUserDto>> DeleteUser(string id)
         {
-            var user = GetUserById(id);
+            var user = await GetUserById(id);
 
             _context.Users.Remove(user);
             _context.SaveChanges();
 
-            var dtos = GetAllUsers()
-                .Select(x => _mapper.Map<ApplicationUserDto>(x))
+            var users = await GetAllUsers();
+            var dtos = users.Select(x => _mapper.Map<ApplicationUserDto>(x))
                 .ToList();
 
             return dtos;
         }
-        
 
-        private ApplicationUser GetUserById(string id)
+        public async Task<ApplicationUserDto> SelfUpdateUser(ApplicationUserUpdateDto userDto)
         {
-            var user = _context.Users.FirstOrDefault(x => x.Id == id);
+            var userId = _contextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (userId is null) throw new NotFoundException("User id not found");
+
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
+
+            _mapper.Map(userDto, user);
+            await _context.SaveChangesAsync();
+
+            var result = _mapper.Map<ApplicationUserDto>(user);
+
+            return result;
+        }
+
+        public async Task<ApplicationUserDto> UserActivation(string id, ApplicationUserActivationDto userDto)
+        {
+            var user = await GetUserById(id);
+            if (user.Active) throw new UserIsActiveException();
+
+            await _userManager.AddToRoleAsync(user, userDto.Role);
+            user.EmployeeAccount = new Employee();
+
+            if(userDto.SupervisorId != null)
+            {
+                var supervisor = await _context.Employees.FirstOrDefaultAsync(x => x.Id ==  userDto.SupervisorId);
+                user.EmployeeAccount.Supervisor = supervisor ?? throw new NotFoundException("Supervisor not found");
+            }
+
+            user.Active = true;
+            await _context.SaveChangesAsync();
+
+            var result = _mapper.Map<ApplicationUserDto>(user);
+            return result;
+        }
+
+
+        private async Task<ApplicationUser> GetUserById(string id)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
 
             if (user is null) throw new NotFoundException("User not found");
 
             return user;
         }
 
-        private List<ApplicationUser> GetAllUsers() => _context.Users.ToList();
+       
 
+        private async Task<List<ApplicationUser>> GetAllUsers() => await _context.Users.ToListAsync();
 
-
+        
     }
 }

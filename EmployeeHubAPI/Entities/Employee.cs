@@ -6,13 +6,12 @@ namespace EmployeeHubAPI.Entities
     public class Employee
     {
         public Guid Id { get; set; }
-        public required string Name { get; set; }
-        public required string Surname { get; set; }
         public Employee? Supervisor { get; set; }
         public List<Employee> Employees { get; set; } = new List<Employee>();
         public Department? Department { get; set; }
         public ApplicationUser? User { get; set; }
-        public int UserId { get; set; }
+        public string? UserId { get; set; }
+        public List<WorktimeSession> WorktimeSessions { get; set; } = new List<WorktimeSession>();
     }
 
     public enum Department
@@ -40,7 +39,11 @@ namespace EmployeeHubAPI.Entities
             builder.HasOne(e => e.User)
                 .WithOne(e => e.EmployeeAccount)
                 .HasForeignKey<Employee>(e => e.UserId)
-                .HasPrincipalKey<ApplicationUser>(e => e.EmployeeAccountId);
+                .HasPrincipalKey<ApplicationUser>(e => e.Id);
+
+            builder.HasMany(e => e.WorktimeSessions)
+                .WithOne()
+                .HasForeignKey(e => e.UserId);
 
         }
     }
