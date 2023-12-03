@@ -43,7 +43,7 @@ namespace EmployeeHubAPI.Entities
 
             builder.HasMany(e => e.WorktimeSessions)
                 .WithOne()
-                .HasForeignKey(e => e.UserId);
+                .HasForeignKey(e => e.EmployeeId);
 
         }
     }

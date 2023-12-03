@@ -8,7 +8,7 @@ namespace EmployeeHubAPI.Entities
         public Guid Id { get; set; }
         public DateTime Start { get; set; }
         public DateTime? End { get; set; }
-        public string? UserId { get; set; }
+        public Guid? EmployeeId { get; set; }
     }
 
     public class WorktimeSessionConfiguratin : IEntityTypeConfiguration<WorktimeSession>

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EmployeeHubAPI.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20231203090419_Init")]
+    [Migration("20231203090841_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -139,9 +139,6 @@ namespace EmployeeHubAPI.Migrations
 
                     b.Property<DateTime>("Start")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

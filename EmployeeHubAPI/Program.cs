@@ -25,6 +25,10 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy("Supervisor", policy =>
     {
         policy.RequireRole("Admin", "Supervisor");
+    })
+    .AddPolicy("Users", policy =>
+    {
+        policy.RequireRole("Admin", "Supervisor", "User");
     });
 
 
