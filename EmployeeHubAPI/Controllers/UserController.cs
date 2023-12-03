@@ -64,7 +64,7 @@ namespace EmployeeHubAPI.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPost("activate/{id}")]
+        [HttpPost("activate/{userId}")]
         public async Task<ActionResult<ApplicationUserDto>> ActivateUser(string id, ApplicationUserActivationDto userDto)
         {
             var result = await _userService.UserActivation(id, userDto);

@@ -5,9 +5,7 @@ using EmployeeHubAPI.Entities;
 using EmployeeHubAPI.Exceptions;
 using EmployeeHubAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.CodeAnalysis.Host;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
 
 namespace EmployeeHubAPI.Services
@@ -113,7 +111,7 @@ namespace EmployeeHubAPI.Services
             else
             {
                 responseResult = CalculateTotalWorktime(sessions);
-                responseMessage = $"Summary time for monthly sessions: {responseResult.Hours}h {responseResult.Minutes}min";
+                responseMessage = $"Summary time for monthly sessions: {responseResult.Hours:00}h {responseResult.Minutes:00}min";
             }
 
 
