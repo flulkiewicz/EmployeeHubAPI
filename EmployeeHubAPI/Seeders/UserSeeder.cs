@@ -20,6 +20,7 @@ namespace EmployeeHubAPI.Seeders
             {
                 var user = new ApplicationUser { UserName = "admin", Email = "admin@wsbk91.pl" };
                 await _userManager.CreateAsync(user, "String123!");
+                await AssignRole(user.UserName, "Admin");
 
                 for (int i = 0; i < 3; i++)
                 {
