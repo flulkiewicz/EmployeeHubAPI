@@ -28,7 +28,7 @@ namespace EmployeeHubAPI.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpGet("/data/{id}")]
+        [HttpGet("data/{id}")]
         public async Task<ActionResult<ApplicationUserDto>> GetUserAsync(string id)
         {
             var result = await _userService.GetUserDto(id);
@@ -36,7 +36,7 @@ namespace EmployeeHubAPI.Controllers
             return Ok(result);
         }
 
-        [HttpGet("/data")]
+        [HttpGet("data")]
         public async Task<ActionResult<ApplicationUserDto>> GetUserAsync()
         {
             var result = await _userService.GetUserDto();
