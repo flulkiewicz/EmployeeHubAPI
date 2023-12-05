@@ -4,9 +4,9 @@ namespace EmployeeHubAPI.Services.Interfaces
 {
     public interface IWorktimeService
     {
-        Task<WorktimeSessionResponse> HandleCurrentUserSessionState(string? userId = null);
+        Task<WorktimeSessionResponse> HandleCurrentUserSessionState(WorktimeSessionDto sessionDto, string? userId = null);
         Task<object> GetMonthlyTime(string? userId = null, int? year = null, int? month = null);
-        Task<List<WorktimeSessionDto>> GetUserSessions(string userId);
-        Task<WorktimeSessionDto> UpdateSession(WorktimeSessionDto session);
+        Task<List<WorktimeSessionAdminDto>> GetUserSessions(string userId);
+        Task<WorktimeSessionDto> UpdateSession(WorktimeSessionAdminDto session);
     }
 }

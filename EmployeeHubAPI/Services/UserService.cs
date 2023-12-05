@@ -30,6 +30,7 @@ namespace EmployeeHubAPI.Services
         public async Task<List<ApplicationUserDto>> GetAllUserDtos()
         {
             var users = await GetAllUsers();
+
             var dtos = users
                 .Select(x => _mapper.Map<ApplicationUserDto>(x))
                 .ToList();
@@ -128,7 +129,9 @@ namespace EmployeeHubAPI.Services
             if (string.IsNullOrEmpty(id))
                 id = GetCurrentUserId();
 
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
+            var user = await _context.Users
+                .Include(x => x.EmployeeAccount)
+                .FirstOrDefaultAsync(x => x.Id == id);
 
             if (user is null) throw new NotFoundException("User not found");
 
@@ -137,7 +140,28 @@ namespace EmployeeHubAPI.Services
 
        
 
-        private async Task<List<ApplicationUser>> GetAllUsers() => await _context.Users.ToListAsync();
+        private async Task<List<ApplicationUser>> GetAllUsers()
+        {
+            var userId = GetCurrentUserId();
+            var user = await GetUserById(userId);
+            List<ApplicationUser> users = new();
+
+            if (await _userManager.IsInRoleAsync(user, "Admin"))
+            {
+                users = await _userManager.Users
+                    .Include(e => e.EmployeeAccount)
+                    .ToListAsync();
+
+            } else if(await _userManager.IsInRoleAsync(user, "Supervisor"))
+            {
+                users = await _userManager.Users
+                    .Include(e => e.EmployeeAccount)
+                    .Where(e => e.EmployeeAccount!.SupervisorId == user.EmployeeAccount!.Id)
+                    .ToListAsync();
+            }
+
+            return users;
+        }
 
         private string GetCurrentUserId()
         {

@@ -7,6 +7,7 @@ namespace EmployeeHubAPI.Entities
     {
         public Guid Id { get; set; }
         public Employee? Supervisor { get; set; }
+        public Guid? SupervisorId { get; set; }
         public List<Employee> Employees { get; set; } = new List<Employee>();
         public Department? Department { get; set; }
         public ApplicationUser? User { get; set; }

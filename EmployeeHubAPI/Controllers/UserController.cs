@@ -18,7 +18,7 @@ namespace EmployeeHubAPI.Controllers
             _userService = userService;
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Supervisor")]
         [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<ApplicationUserDto>>> GetAllUsersAsync()
         {
@@ -27,7 +27,7 @@ namespace EmployeeHubAPI.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Supervisor")]
         [HttpGet("data/{id}")]
         public async Task<ActionResult<ApplicationUserDto>> GetUserAsync(string id)
         {

@@ -25,7 +25,7 @@ namespace EmployeeHubAPI.Services
             _mapper = mapper;
         }
 
-        public async Task<WorktimeSessionResponse> HandleCurrentUserSessionState(string? userId = null)
+        public async Task<WorktimeSessionResponse> HandleCurrentUserSessionState(WorktimeSessionDto sessionDto, string? userId = null)
         {
             var response = new WorktimeSessionResponse();
 
@@ -58,7 +58,7 @@ namespace EmployeeHubAPI.Services
             return response;
         }
 
-        public async Task<WorktimeSessionDto> UpdateSession(WorktimeSessionDto sessionDto)
+        public async Task<WorktimeSessionDto> UpdateSession(WorktimeSessionAdminDto sessionDto)
         {
             var session = await _context.WorktimeSessions.FirstOrDefaultAsync(x => x.Id == sessionDto.Id);
             
@@ -72,12 +72,12 @@ namespace EmployeeHubAPI.Services
         }
 
 
-        public async Task<List<WorktimeSessionDto>> GetUserSessions(string userId)
+        public async Task<List<WorktimeSessionAdminDto>> GetUserSessions(string userId)
         {
             var user = await GetUserById(userId);
             var sessions = user.EmployeeAccount?.WorktimeSessions.OrderByDescending(x => x.Start);
 
-            var sessionsDto = _mapper.Map<List<WorktimeSessionDto>>(sessions);
+            var sessionsDto = _mapper.Map<List<WorktimeSessionAdminDto>>(sessions);
 
             return sessionsDto;
         }

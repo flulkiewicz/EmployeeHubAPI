@@ -19,19 +19,19 @@ namespace EmployeeHubAPI.Controllers
         }
 
         //Self handle session for currently logged employee
-        [HttpGet]
-        public async Task<ActionResult<WorktimeSessionResponse>> HandleSession()
+        [HttpPost]
+        public async Task<ActionResult<WorktimeSessionResponse>> HandleSession(WorktimeSessionDto sessionDto)
         {
-            var result = await _worktimeService.HandleCurrentUserSessionState();
+            var result = await _worktimeService.HandleCurrentUserSessionState(sessionDto);
 
             return Ok(result);
         }
 
         //Handle session for user - provide employee Id
-        [HttpGet("{id}")]
-        public async Task<ActionResult<WorktimeSessionResponse>> HandleSessionManually(string id)
+        [HttpPost("{id}")]
+        public async Task<ActionResult<WorktimeSessionResponse>> HandleSessionManually(string id, WorktimeSessionManualUpdateDto sessionDto)
         {
-            var result = await _worktimeService.HandleCurrentUserSessionState(id);
+            var result = await _worktimeService.HandleCurrentUserSessionState(sessionDto, id);
 
             return Ok(result);
         }
@@ -45,7 +45,7 @@ namespace EmployeeHubAPI.Controllers
         }
 
         [HttpPost("update")]
-        public async Task<ActionResult<WorktimeSessionDto>> UpdateSession(WorktimeSessionDto worktimeSessionDto)
+        public async Task<ActionResult<WorktimeSessionDto>> UpdateSession(WorktimeSessionAdminDto worktimeSessionDto)
         {
             var result = await _worktimeService.UpdateSession(worktimeSessionDto);
 
@@ -53,7 +53,7 @@ namespace EmployeeHubAPI.Controllers
         }
 
         [HttpGet("user-sessions/{id}")]
-        public async Task<ActionResult<List<WorktimeSessionDto>>> UserSessions(string userId)
+        public async Task<ActionResult<List<WorktimeSessionAdminDto>>> UserSessions(string userId)
         {
             var result = await _worktimeService.GetUserSessions(userId);
 
