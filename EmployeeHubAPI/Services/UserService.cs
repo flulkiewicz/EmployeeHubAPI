@@ -35,12 +35,12 @@ namespace EmployeeHubAPI.Services
                 .Select(x => _mapper.Map<ApplicationUserDto>(x))
                 .ToList();
 
-            users.ForEach(async x =>
+            foreach (var x in users)
             {
                 var roles = await _userManager.GetRolesAsync(x);
                 var dto = dtos.First(e => e.Id == x.Id);
                 dto.Roles = roles.ToList();
-            });
+            }
 
             return dtos;
         }
