@@ -49,6 +49,8 @@ namespace EmployeeHubAPI.Services
             else
             {
                 lastSession.End = DateTime.UtcNow;
+                lastSession.Description = sessionDto.Description;
+
                 response.State = "Session finished";
                 response.SessionInfo = _mapper.Map<WorktimeSessionDto>(lastSession);
             }

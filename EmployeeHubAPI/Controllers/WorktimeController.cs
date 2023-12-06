@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeHubAPI.Controllers
 {
-    //[Authorize(Policy = "Users")]
+    [Authorize(Policy = "Users")]
     [ApiController]
     [Route("worktime-session")]
     public class WorktimeController : ControllerBase
