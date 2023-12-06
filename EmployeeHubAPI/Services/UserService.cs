@@ -112,8 +112,8 @@ namespace EmployeeHubAPI.Services
 
             if(userDto.SupervisorId != null)
             {
-                var supervisor = await _context.Employees.FirstOrDefaultAsync(x => x.Id ==  userDto.SupervisorId);
-                user.EmployeeAccount.Supervisor = supervisor ?? throw new NotFoundException("Supervisor not found");
+                var supervisor = await _context.Users.FirstOrDefaultAsync(x => x.Id ==  userDto.SupervisorId.ToString());
+                user.EmployeeAccount.Supervisor = supervisor!.EmployeeAccount ?? throw new NotFoundException("Supervisor not found");
             }
 
             user.Active = true;
