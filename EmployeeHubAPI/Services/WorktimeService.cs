@@ -58,6 +58,16 @@ namespace EmployeeHubAPI.Services
             return response;
         }
 
+        public async Task DeleteSession(Guid sessionId)
+        {
+            var session = _context.WorktimeSessions.FirstOrDefault(x => x.Id == sessionId);
+
+            if (session is null) throw new NotFoundException("Session with given id not found");
+
+            _context.WorktimeSessions.Remove(session);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<WorktimeSessionDto> UpdateSession(WorktimeSessionAdminDto sessionDto)
         {
             var session = await _context.WorktimeSessions.FirstOrDefaultAsync(x => x.Id == sessionDto.Id);

@@ -8,5 +8,6 @@ namespace EmployeeHubAPI.Services.Interfaces
         Task<object> GetMonthlyTime(string? userId = null, int? year = null, int? month = null);
         Task<List<WorktimeSessionAdminDto>> GetUserSessions(string userId);
         Task<WorktimeSessionDto> UpdateSession(WorktimeSessionAdminDto session);
+        Task DeleteSession(Guid sessionId);
     }
 }

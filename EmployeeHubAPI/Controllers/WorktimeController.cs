@@ -36,6 +36,7 @@ namespace EmployeeHubAPI.Controllers
             return Ok(result);
         }
 
+
         [HttpGet("montly-time/{userId}")]
         public async Task<ActionResult<List<WorktimeSessionDto>>> GetSummaryTimeForCurrentMonth(string userId)
         {
@@ -51,6 +52,15 @@ namespace EmployeeHubAPI.Controllers
 
             return Ok(result);
         }
+
+        [HttpDelete("{sessionId}")]
+        public async Task<ActionResult<WorktimeSessionDto>> DeleteSession(Guid sessionId)
+        {
+            await _worktimeService.DeleteSession(sessionId);
+
+            return Ok();
+        }
+
 
         [HttpGet("user-sessions/{id}")]
         public async Task<ActionResult<List<WorktimeSessionAdminDto>>> UserSessions(string userId)

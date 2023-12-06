@@ -18,13 +18,13 @@ namespace EmployeeHubAPI.Seeders
         {
             if (!await _userManager.Users.AnyAsync())
             {
-                var user = new ApplicationUser { UserName = "admin", Email = "admin@wsbk91.pl" };
+                var user = new ApplicationUser { UserName = "admin@wsbk91.pl", Email = "admin@wsbk91.pl" };
                 await _userManager.CreateAsync(user, "String123!");
                 await AssignRole(user.UserName, "Admin");
 
                 for (int i = 0; i < 3; i++)
                 {
-                    var supervisor = new ApplicationUser { UserName = $"supervisor{i}", Email = $"supervisor{i}@fajnafirma.pl" };
+                    var supervisor = new ApplicationUser { UserName = $"supervisor{i}@fajnafirma.pl", Email = $"supervisor{i}@fajnafirma.pl" };
                     await _userManager.CreateAsync(supervisor, "String123!");
                     await AssignRole(supervisor.UserName, "Supervisor");
                     await CreateEmployeeAccount(supervisor.UserName);
@@ -32,7 +32,7 @@ namespace EmployeeHubAPI.Seeders
 
                 for (int i = 0; i < 20; i++)
                 {
-                    var employee = new ApplicationUser { UserName = $"employee{i}", Email = $"employee{i}@fajnafirma.pl" };
+                    var employee = new ApplicationUser { UserName = $"employee{i}@fajnafirma.pl", Email = $"employee{i}@fajnafirma.pl" };
                     await _userManager.CreateAsync(employee, "String123!");
                     await AssignRole(employee.UserName, "User");
                     await CreateEmployeeAccount(employee.UserName);
