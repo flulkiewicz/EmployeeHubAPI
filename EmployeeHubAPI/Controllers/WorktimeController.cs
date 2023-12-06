@@ -62,7 +62,7 @@ namespace EmployeeHubAPI.Controllers
         }
 
 
-        [HttpGet("user-sessions/{id}")]
+        [HttpGet("user-sessions/{userId}")]
         public async Task<ActionResult<List<WorktimeSessionAdminDto>>> UserSessions(string userId)
         {
             var result = await _worktimeService.GetUserSessions(userId);
