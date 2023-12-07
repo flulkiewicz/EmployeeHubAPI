@@ -79,5 +79,14 @@ namespace EmployeeHubAPI.Controllers
 
             return Ok(result);
         }
+
+        [Authorize(Policy = "Admin")]
+        [HttpGet("supervisors")]
+        public async Task<ActionResult<List<ApplicationUserSupervisorDto>>> GetSupervisors()
+        {
+            var result = await _userService.GetSupervisors();
+
+            return Ok(result);
+        }
     }
 }

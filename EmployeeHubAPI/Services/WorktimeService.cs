@@ -69,7 +69,7 @@ namespace EmployeeHubAPI.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<WorktimeSessionDto> UpdateSession(WorktimeSessionAdminDto sessionDto)
+        public async Task<WorktimeSessionDto> UpdateSession(WorktimeSessionUpdateDto sessionDto)
         {
             var session = await _context.WorktimeSessions.FirstOrDefaultAsync(x => x.Id == sessionDto.Id);
             
@@ -79,7 +79,7 @@ namespace EmployeeHubAPI.Services
             _mapper.Map(sessionDto, session);
             await _context.SaveChangesAsync();
 
-            return sessionDto;
+            return _mapper.Map<WorktimeSessionDto>(session);
         }
 
         public async Task<WorktimeSession> AddSession(string userId, WorktimeSessionAddDto sessionDto)

@@ -11,5 +11,6 @@ namespace EmployeeHubAPI.Services.Interfaces
         Task<ApplicationUserDto> UpdateUser(string id, ApplicationUserUpdateDto userDto);
         Task<ApplicationUserDto> SelfUpdateUser(ApplicationUserUpdateDto userDto);
         Task<ApplicationUserDto> UserActivation(string id, ApplicationUserActivationDto userDto);
+        Task<List<ApplicationUserSupervisorDto>> GetSupervisors();
     }
 }

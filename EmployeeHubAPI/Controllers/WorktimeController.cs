@@ -36,7 +36,7 @@ namespace EmployeeHubAPI.Controllers
         }
 
         [HttpPut("update")]
-        public async Task<ActionResult<WorktimeSessionDto>> UpdateSession(WorktimeSessionAdminDto worktimeSessionDto)
+        public async Task<ActionResult<WorktimeSessionDto>> UpdateSession(WorktimeSessionUpdateDto worktimeSessionDto)
         {
             var result = await _worktimeService.UpdateSession(worktimeSessionDto);
 

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EmployeeHubAPI.ApplicationUserDtos;
+using EmployeeHubAPI.Dtos.ApplicationUserDtos;
 using EmployeeHubAPI.Dtos.EmployeeDtos;
 using EmployeeHubAPI.Dtos.WorktimeSessionDtos;
 using EmployeeHubAPI.Entities;
@@ -13,6 +14,7 @@ namespace EmployeeHubAPI
             #region User
             CreateMap<ApplicationUser, ApplicationUserDto>();
             CreateMap<ApplicationUserUpdateDto, ApplicationUser>();
+            CreateMap<ApplicationUser, ApplicationUserSupervisorDto>();
             #endregion
 
             #region Employee

@@ -60,6 +60,14 @@ namespace EmployeeHubAPI.Services
             return dto;
         }
 
+        public async Task<List<ApplicationUserSupervisorDto>> GetSupervisors()
+        {
+            var supervisors =  await _userManager.GetUsersInRoleAsync("Supervisor");
+            var supervisorsDto = _mapper.Map<List<ApplicationUserSupervisorDto>>(supervisors);
+
+            return supervisorsDto;
+        }
+
         public async Task<ApplicationUserDto> UpdateUser(string id, ApplicationUserUpdateDto userDto)
         {
             var user = await GetUserById(id);
