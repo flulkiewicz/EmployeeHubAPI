@@ -85,7 +85,9 @@ namespace EmployeeHubAPI.Services
         public async Task<WorktimeSession> AddSession(string userId, WorktimeSessionAddDto sessionDto)
         {
             var user = await GetUserById(userId);
-            var currentUser = _userManager.Users.First(x => x.Id == GetCurrentUserId());
+            var currentUser = _userManager.Users
+                .Include(x => x.EmployeeAccount)
+                .First(x => x.Id == GetCurrentUserId());
 
             if(await _userManager.IsInRoleAsync(currentUser, "Supervisor"))
                 if (user.EmployeeAccount!.SupervisorId != currentUser.EmployeeAccount!.Id)
