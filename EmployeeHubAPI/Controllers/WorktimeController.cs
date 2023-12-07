@@ -27,16 +27,6 @@ namespace EmployeeHubAPI.Controllers
             return Ok(result);
         }
 
-        //Handle session for user - provide employee Id
-        [HttpPost("{id}")]
-        public async Task<ActionResult<WorktimeSessionResponse>> HandleSessionManually(string id, WorktimeSessionManualUpdateDto sessionDto)
-        {
-            var result = await _worktimeService.HandleCurrentUserSessionState(sessionDto, id);
-
-            return Ok(result);
-        }
-
-
         [HttpGet("montly-time/{userId}")]
         public async Task<ActionResult<List<WorktimeSessionDto>>> GetSummaryTimeForCurrentMonth(string userId)
         {
@@ -45,10 +35,18 @@ namespace EmployeeHubAPI.Controllers
             return Ok(result);
         }
 
-        [HttpPost("update")]
+        [HttpPut("update")]
         public async Task<ActionResult<WorktimeSessionDto>> UpdateSession(WorktimeSessionAdminDto worktimeSessionDto)
         {
             var result = await _worktimeService.UpdateSession(worktimeSessionDto);
+
+            return Ok(result);
+        }
+
+        [HttpPost("add/{userId}")]
+        public async Task<ActionResult<WorktimeSessionDto>> AddSession(string userId, WorktimeSessionAddDto worktimeSessionDto)
+        {
+            var result = await _worktimeService.AddSession(userId, worktimeSessionDto);
 
             return Ok(result);
         }

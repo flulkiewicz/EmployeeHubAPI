@@ -25,12 +25,11 @@ namespace EmployeeHubAPI.Services
             _mapper = mapper;
         }
 
-        public async Task<WorktimeSessionResponse> HandleCurrentUserSessionState(WorktimeSessionDto sessionDto, string? userId = null)
+        public async Task<WorktimeSessionResponse> HandleCurrentUserSessionState(WorktimeSessionDto sessionDto, string? userId)
         {
             var response = new WorktimeSessionResponse();
 
-            if (userId is null)
-                userId = _contextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            userId = _contextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             var user = await GetUserById(userId);
 
@@ -81,6 +80,24 @@ namespace EmployeeHubAPI.Services
             await _context.SaveChangesAsync();
 
             return sessionDto;
+        }
+
+        public async Task<WorktimeSession> AddSession(string userId, WorktimeSessionAddDto sessionDto)
+        {
+            var user = await GetUserById(userId);
+            var currentUser = _userManager.Users.First(x => x.Id == GetCurrentUserId());
+
+            if(await _userManager.IsInRoleAsync(currentUser, "Supervisor"))
+                if (user.EmployeeAccount!.SupervisorId != currentUser.EmployeeAccount!.Id)
+                    throw new Exception("You are not authorized to update this user");
+
+            var session = _mapper.Map<WorktimeSession>(sessionDto);
+            session.EmployeeId = user.EmployeeAccount!.Id;
+            _context.WorktimeSessions.Add(session);
+
+            await _context.SaveChangesAsync();
+
+            return session;
         }
 
 
@@ -160,6 +177,17 @@ namespace EmployeeHubAPI.Services
             }
 
             return totalWorktime;
+        }
+
+        private string GetCurrentUserId()
+        {
+            var currentUserId = _contextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (currentUserId is null || currentUserId == string.Empty)
+                throw new NotFoundException("There is no claim for current User Id");
+
+            return currentUserId;
+
         }
 
     }

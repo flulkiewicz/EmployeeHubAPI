@@ -1,4 +1,5 @@
 ﻿using EmployeeHubAPI.Dtos.WorktimeSessionDtos;
+using EmployeeHubAPI.Entities;
 
 namespace EmployeeHubAPI.Services.Interfaces
 {
@@ -9,5 +10,6 @@ namespace EmployeeHubAPI.Services.Interfaces
         Task<List<WorktimeSessionAdminDto>> GetUserSessions(string userId);
         Task<WorktimeSessionDto> UpdateSession(WorktimeSessionAdminDto session);
         Task DeleteSession(Guid sessionId);
+        Task<WorktimeSession> AddSession(string userId, WorktimeSessionAddDto sessionDto);
     }
 }

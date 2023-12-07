@@ -28,6 +28,7 @@ namespace EmployeeHubAPI
             CreateMap<WorktimeSessionAdminDto, WorktimeSession>();
             CreateMap<WorktimeSession, WorktimeSessionAdminDto>();
             CreateMap<WorktimeSessionManualUpdateDto, WorktimeSession>();
+            CreateMap<WorktimeSessionAddDto, WorktimeSession>();
             #endregion
         }
     }
